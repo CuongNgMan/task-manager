@@ -7,6 +7,7 @@
     "build": "babel ./src -d dist",
     "start": "npm run build && nodemon ./dist/index.js",
     "serve": "node dist/index.js",
+    "check": "nodemon --exec babel-node ./src/model/task.model.js",
     "test": "jest ./test"
   },
   "keywords": [],
@@ -14,6 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "@types/jest": "^24.0.15",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "mongodb": "^3.2.7",
     "mongoose": "^5.6.0",
@@ -22,6 +25,7 @@
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
+    "@babel/node": "^7.4.5",
     "@babel/preset-env": "^7.4.5"
   }
 }

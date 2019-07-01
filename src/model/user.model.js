@@ -1,8 +1,53 @@
-//IMPORT
-import db from "../db/conn";
-import userSchema from "../schema/user.schema";
+import m from "mongoose";
+import validator from "validator";
+import taskSchema from "./task.schema";
 
-//Creating user model
-const UserModel = db.model("User", userSchema);
+export const USER = {
+  id: "id",
+  name: "name",
+  age: "age",
+  email: "email",
+  pwd: "pwd",
+  tasks: "tasks"
+};
 
-export default UserModel;
+//Define schema
+const Schema = m.Schema;
+const userSchema = new Schema({
+  [USER.id]: {
+    type: Schema.Types.ObjectId
+  },
+  [USER.name]: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 50
+  },
+  [USER.age]: {
+    type: Number,
+    required: true,
+    max: 100
+  },
+  [USER.email]: {
+    type: String,
+    required: true,
+    lowercase: true,
+    trim: true
+  },
+  [USER.pwd]: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 8
+  },
+  [USER.tasks]: {
+    type: [taskSchema]
+  }
+});
+
+//Define schema hooks
+userSchema.path("email").validate(value => {
+  return validator.isEmail(value);
+});
+
+export default m.model("User", userSchema);
