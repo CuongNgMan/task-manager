@@ -8,7 +8,8 @@
     "start": "npm run build && nodemon ./dist/index.js",
     "serve": "node dist/index.js",
     "check": "nodemon --exec babel-node ./src/model/task.model.js",
-    "test": "jest ./test"
+    "test": "jest ./test",
+    "dev": "nodemon -L ./index.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "@types/jest": "^24.0.15",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "mongodb": "^3.2.7",
     "mongoose": "^5.6.0",
@@ -26,6 +28,10 @@
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/node": "^7.4.5",
-    "@babel/preset-env": "^7.4.5"
+    "@babel/preset-env": "^7.4.5",
+    "@babel/register": "^7.4.4",
+    "jest": "^24.8.0",
+    "jest-cli": "^24.8.0",
+    "jest-express": "^1.10.1"
   }
 }

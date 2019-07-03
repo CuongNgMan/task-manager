@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/v1/tasks", Router.taskRouter);
 app.use("/api/v1/users", Router.userRouter);
 app.use("/", (req, res) => {
-  res.send("task manager API");
+  res.send({ API: "task manager api" });
 });
 app.use("*", (req, res) => {
   res.status(404).json({ error: "not found" });

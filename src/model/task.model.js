@@ -11,27 +11,27 @@ export const TASK = {
 };
 
 const taskSchema = new Schema({
-  [TASK_MODEL.id]: {
+  [TASK.id]: {
     type: Schema.Types.ObjectId
   },
-  [TASK_MODEL.completed]: {
+  [TASK.completed]: {
     type: Boolean,
     required: true,
     default: false
   },
-  [TASK_MODEL.desc]: {
+  [TASK.desc]: {
     type: String,
     required: true,
     maxlength: 50,
     trim: true
   },
-  [TASK_MODEL.content]: {
+  [TASK.content]: {
     type: String,
     required: true,
     maxlength: 50,
     trim: true
   },
-  [TASK_MODEL.date]: {
+  [TASK.date]: {
     type: Date,
     required: true
   }
