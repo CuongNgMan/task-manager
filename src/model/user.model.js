@@ -1,6 +1,7 @@
 import m from "mongoose";
 import validator from "validator";
-import taskSchema from "./task.schema";
+import { taskSchema } from "./task.model";
+import conn from "../db/conn";
 
 export const USER = {
   id: "id",
@@ -50,4 +51,4 @@ userSchema.path("email").validate(value => {
   return validator.isEmail(value);
 });
 
-export default m.model("User", userSchema);
+conn.model("User", userSchema);

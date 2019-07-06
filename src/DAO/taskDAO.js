@@ -1,18 +1,32 @@
 import TaskModel, { TASK } from "../model/task.model";
 import mongodb from "mongodb";
+import m from "mongoose";
 
-let tasks;
 const ObjectID = mongodb.ObjectId;
 
+let taskDbCollection;
+
 export default class TaskDAO {
+  static async injectDB(client) {
+    if (taskDbCollection) {
+      return;
+    }
+    taskDbCollection = client.useDb("task-manager-api").collection("tasks");
+    this.taskDbCollection = taskDbCollection;
+    return taskDbCollection;
+  }
+
   static async getTasks() {
     try {
-      const tasks = await TaskModel.find({}).exec();
-      return tasks;
-    } catch (error) {
-      return error;
+      const tasks = await taskDbCollection.find({}).forEach(res => {
+        
+      })
+      console.log(tasks);
+    } catch (err) {
+      return `Error while getting all tasks ${err}`;
     }
   }
+
   static async getTask(taskID) {
     try {
       const task = await TaskModel.find({ _id: new ObjectID(taskID) }).exec();
@@ -22,6 +36,7 @@ export default class TaskDAO {
     }
     return task;
   }
+
   static async createTask(newTask) {
     try {
       await TaskModel.create(newTask, err => {
@@ -32,8 +47,11 @@ export default class TaskDAO {
       });
     } catch (error) {}
   }
+
   static async updateTask(taskID, newTask) {}
+
   static async removeTask(taskID) {}
+
   static async taskCount() {
     try {
       return TaskModel.countDocuments();
@@ -45,3 +63,5 @@ export default class TaskDAO {
     }
   }
 }
+
+TaskDAO.getTask();

@@ -1,20 +1,8 @@
 import m from "mongoose";
-// import app from "./server";
-
-const DB_NAME = process.env.__DB_NAME__;
-const DB_PORT = process.env.__DB_PORT__ || "27017";
-const SERV_PORT = process.env.__SRV_PORT__ || "3000";
-
-const DB_URI = process.env.__URI__ || `mongodb://127.0.0.1:${DB_PORT}`;
-
-const CONNECTION_STRING = `${DB_URI}/${DB_NAME}`;
-const CONNECT_OPTIONS = {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  autoIndex: false,
-  reconnectTries: Number.MAX_VALUE
-};
-
+import TaskDAO from "./DAO/taskDAO";
+import UserDAO from "./DAO/userDAO";
+import conn, { CONNECTION_STRING, CONNECT_OPTIONS } from "./db/conn";
+import TaskModel, { taskSchema } from "./model/task.model";
 //DB connection event hanlder
 m.connection.on("connected", () => {
   console.log(`Connected to db ${DB_NAME}`);
@@ -33,20 +21,41 @@ process.on("SIGINT", () => {
 });
 
 //Connect to DB
-m.connect(CONNECTION_STRING, CONNECT_OPTIONS)
-  .catch(err => {
-    console.log(`Connecting to ${DB_NAME}`);
-    console.log(`Error: ${err}`);
-    console.log(`Connection string: ${CONNECTION_STRING}`);
-    process.exit(1);
+conn
+  .openUri(CONNECTION_STRING, CONNECT_OPTIONS)
+  .then(async client => {
+    await TaskDAO.injectDB(client);
+    await UserDAO.injectDB(client);
+    const test = await TaskDAO.getTasks();
+    console.log(test);
+    const query = TaskModel.find();
   })
-  .then(() => {
-    //setting up express server
-    // app.listen(SERV_PORT, err => {
-    //   if (err) {
-    //     console.log(`Error while connecting to express on port ${SERV_PORT}`);
-    //     process.exit(2);
-    //   }
-    //   console.log(`Server is listening on port ${SERV_PORT}`);
-    // });
+  .catch(err => {
+    console.log(err);
+    process.exit(1);
   });
+// m.connect(CONNECTION_STRING, CONNECT_OPTIONS)
+//   .catch(err => {
+//     console.log(`Connecting to ${DB_NAME}`);
+//     console.log(`Error: ${err}`);
+//     console.log(`Connection string: ${CONNECTION_STRING}`);
+//     process.exit(1);
+//   })
+//   .then(client => {
+//     // const model = client.model('Task').find({}).then(res => {
+//     //   console.log(res);
+//     // })
+
+//     const res = TaskDAO.injectDB(client).then(res => {
+//       console.log(res);
+//     });
+
+//     //setting up express server
+//     // app.listen(SERV_PORT, err => {
+//     //   if (err) {
+//     //     console.log(`Error while connecting to express on port ${SERV_PORT}`);
+//     //     process.exit(2);
+//     //   }
+//     //   console.log(`Server is listening on port ${SERV_PORT}`);
+//     // });
+//   });

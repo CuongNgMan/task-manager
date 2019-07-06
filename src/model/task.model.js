@@ -1,6 +1,5 @@
 import m from "mongoose";
-
-const Schema = m.Schema;
+import conn from "../db/conn";
 
 export const TASK = {
   id: "userID",
@@ -10,7 +9,8 @@ export const TASK = {
   date: "date"
 };
 
-const taskSchema = new Schema({
+const Schema = m.Schema;
+export const taskSchema = new Schema({
   [TASK.id]: {
     type: Schema.Types.ObjectId
   },
@@ -40,7 +40,7 @@ const taskSchema = new Schema({
 //Schema hooks
 
 //Model
-export default m.model("Task", taskSchema);
+conn.model("Task", taskSchema);
 
 /*
 const DB_NAME = "task-manager-api";
