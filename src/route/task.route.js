@@ -1,15 +1,15 @@
 import express from "express";
 import TaskController from "../api/task.controller";
-import UserController from "../api/user.controller";
 
 const router = express.Router();
 
-router.route("/").get(TaskController.getAll);
-router.route("/id/:id").get(TaskController.get);
-router
-  .route("/task")
-  .post(TaskController.add)
-  .put(TaskController.update)
-  .delete(TaskController.remove);
+// router.route("/id/:id").get(TaskController.get);
+// router
+//   .route("/task")
+//   .post(TaskController.add)
+//   .put(TaskController.update)
+//   .delete(TaskController.remove);
+router.route("/").get(TaskController.apiGetTasks);
+router.route("/id/:id").get(TaskController.apiGetTaskByID);
 
 export default router;

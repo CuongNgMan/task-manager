@@ -2,7 +2,6 @@
 const NodeEnvironment = require("jest-environment-node");
 const m = require("mongoose");
 
-
 const DB_URI = process.env.__URI__;
 
 const CONNECT_OPTIONS = {
@@ -15,14 +14,15 @@ const CONNECT_OPTIONS = {
 module.exports = class TestEnvironment extends NodeEnvironment {
   async setup() {
     if (!this.global.mongooseDB) {
-      
+      this.global.mongooseDB = m.createConnection();
     }
-    this.global.mongooseDB = m.createConnection();
     await super.setup();
   }
 
   async teardown() {
-    this.global.mongooseDB = undefined;
+    if (this.global.mongooseDB) {
+      this.global.mongooseDB.close();
+    }
     await super.teardown();
   }
 

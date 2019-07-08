@@ -1,5 +1,3 @@
-import TaskDAO from "../src/DAO/taskDAO";
-
 describe("Successfully connect to mongoDB", () => {
   beforeAll(async () => {
     await global.mongooseDB

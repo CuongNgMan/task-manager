@@ -1,51 +1,60 @@
-import TaskModel, { TASK } from "../model/task.model";
 import mongodb from "mongodb";
-import m from "mongoose";
+import { TASK, TASK_SCHEMA } from "../model/task.model";
 
 const ObjectID = mongodb.ObjectId;
 
-let taskDbCollection;
+let taskModel;
 
 export default class TaskDAO {
   static async injectDB(client) {
-    if (taskDbCollection) {
+    if (taskModel) {
       return;
     }
-    taskDbCollection = client.useDb("task-manager-api").collection("tasks");
-    this.taskDbCollection = taskDbCollection;
-    return taskDbCollection;
+    try {
+      taskModel = client.model("Task", TASK_SCHEMA);
+      this.taskModel = taskModel;
+      return taskModel;
+    } catch (error) {
+      return {
+        errCode: -1,
+        errMsg: `[TaskDAO] error while injecting DB ${error}`
+      };
+    }
   }
 
   static async getTasks() {
     try {
-      const tasks = await taskDbCollection.find({}).forEach(res => {
-        
-      })
-      console.log(tasks);
-    } catch (err) {
-      return `Error while getting all tasks ${err}`;
+      const tasks = await taskModel.find({});
+      return tasks;
+    } catch (error) {
+      return {
+        errCode: -1,
+        errMsg: `[TaskDAO] Error while getting all tasks ${error}`
+      };
     }
   }
 
   static async getTask(taskID) {
     try {
-      const task = await TaskModel.find({ _id: new ObjectID(taskID) }).exec();
+      const task = await taskModel.findById(taskID).lean();
       return task;
     } catch (error) {
-      return error;
+      return {
+        errCode: -1,
+        errMsg: `[TaskDAO] error while getting task by ID: ${taskID} - ${error}`
+      };
     }
-    return task;
   }
 
   static async createTask(newTask) {
     try {
-      await TaskModel.create(newTask, err => {
-        if (err) {
-          console.log(`Error: ${err} \n while creating new task ${newTask}`);
-          return err;
-        }
-      });
-    } catch (error) {}
+      await TaskModel.create(newTask);
+    } catch (error) {
+      return {
+        errCode: -1,
+        errMsg: `[TaskDAO] error while creating task ${newTask} - ${error}`
+      };
+    }
   }
 
   static async updateTask(taskID, newTask) {}
@@ -55,11 +64,11 @@ export default class TaskDAO {
   static async taskCount() {
     try {
       return TaskModel.countDocuments();
-    } catch (err) {
-      if (err) {
-        console.log(`Error while ${err}`);
-        return err;
-      }
+    } catch (error) {
+      return {
+        errCode: -1,
+        errMsg: `[TaskDAO] error while calling taskCount ${error}`
+      };
     }
   }
 }

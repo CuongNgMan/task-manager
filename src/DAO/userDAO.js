@@ -1,16 +1,19 @@
 //IMPORT
-import UserModel, { USER } from "../model/user.model";
+import { USER_SCHEMA } from "../model/user.model";
 
-let users;
+let userModel;
 
 export default class UserDAO {
   static async injectDB(client) {
-    if (users) {
+    if (userModel) {
       return;
     }
-
-    users = client.model("User");
-    return users;
+    try {
+      userModel = await client.model("User", USER_SCHEMA);
+      return userModel;
+    } catch (error) {
+      console.log(`[UserDAO] error while injecting DB ${error}`);
+    }
   }
 
   static async getUsers() {}
@@ -18,6 +21,6 @@ export default class UserDAO {
   static async getUser(id) {}
 
   static async createUser(newUser) {}
-  
+
   static async updateUser(newUser) {}
 }

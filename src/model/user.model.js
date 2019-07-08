@@ -1,7 +1,6 @@
 import m from "mongoose";
 import validator from "validator";
 import { taskSchema } from "./task.model";
-import conn from "../db/conn";
 
 export const USER = {
   id: "id",
@@ -14,7 +13,7 @@ export const USER = {
 
 //Define schema
 const Schema = m.Schema;
-const userSchema = new Schema({
+export const USER_SCHEMA = new Schema({
   [USER.id]: {
     type: Schema.Types.ObjectId
   },
@@ -47,8 +46,6 @@ const userSchema = new Schema({
 });
 
 //Define schema hooks
-userSchema.path("email").validate(value => {
+USER_SCHEMA.path("email").validate(value => {
   return validator.isEmail(value);
 });
-
-conn.model("User", userSchema);
