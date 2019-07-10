@@ -11,5 +11,6 @@ const router = express.Router();
 //   .delete(TaskController.remove);
 router.route("/").get(TaskController.apiGetTasks);
 router.route("/id/:id").get(TaskController.apiGetTaskByID);
+router.route("/task").post(TaskController.apiAddTask);
 
 export default router;

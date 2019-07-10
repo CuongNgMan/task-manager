@@ -10,7 +10,8 @@ export const CONNECT_OPTIONS = {
   useNewUrlParser: true,
   useCreateIndex: true,
   autoIndex: false,
-  reconnectTries: Number.MAX_VALUE
+  reconnectTries: Number.MAX_VALUE,
+  useFindAndModify: false
 };
 export const SERVER_PORT = process.env.__SRV_PORT__ || 3000;
 

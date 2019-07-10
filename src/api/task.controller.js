@@ -25,7 +25,7 @@ export default class TaskController {
       if (!task) {
         return res.status(404).send({
           err: `[TaskController] no task found with ID ${req.params.id}`
-        })
+        });
       }
       return res.json(task);
     } catch (error) {
@@ -36,9 +36,13 @@ export default class TaskController {
     }
   }
 
-  static async apiAddTask(new_task) {
+  static async apiAddTask(req, res, next) {
     try {
-      await TaskDAO.createTask(new_task);
+      const task = req.body;
+      console.log(task);
+      await TaskDAO.createTask(task).then(() => {
+        res.status(201).send(task);
+      });
     } catch (error) {
       return {
         errCode: -1,
@@ -47,7 +51,7 @@ export default class TaskController {
     }
   }
 
-  static async update(task_id) {}
+  static async apiUpdateTaskByID(task_id) {}
 
-  static async remove(task_id) {}
+  static async apiRemoveTaskByID(task_id) {}
 }

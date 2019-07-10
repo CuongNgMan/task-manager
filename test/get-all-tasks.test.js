@@ -26,11 +26,12 @@ describe("Connect to DB and get task(s)", () => {
 
   test("Getting task by id", async () => {
     try {
-      const targetTaskID = ObjectID("5d16f25fcf6bf71a808f71f0");
+      const targetTaskID = "5d16f25fcf6bf71a808f71f0";
 
       const task = await TaskDAO.getTask(targetTaskID);
-
-      expect(task._id).toEqual(targetTaskID);
+      console.log(`Getting task `);
+      console.log(task);
+      expect(task._id).toEqual(ObjectID(targetTaskID));
     } catch (error) {
       console.log(`[Testing] error while calling TaskDAO.getTask(ID) ${error}`);
     }

@@ -48,7 +48,8 @@ export default class TaskDAO {
 
   static async createTask(newTask) {
     try {
-      await TaskModel.create(newTask);
+      const createdTask = await taskModel.create(newTask);
+      return createdTask;
     } catch (error) {
       return {
         errCode: -1,
@@ -57,9 +58,30 @@ export default class TaskDAO {
     }
   }
 
-  static async updateTask(taskID, newTask) {}
+  static async updateTask(taskID, update) {
+    try {
+      await taskModel.findByIdAndUpdate(taskID, update, {
+        lean: true,
+        omitUndefined: false
+      });
+    } catch (error) {
+      return {
+        errCode: -1,
+        errMsg: `[TaskDAO] error while calling updateTask ${error}`
+      };
+    }
+  }
 
-  static async removeTask(taskID) {}
+  static async removeTask(taskID) {
+    try {
+      await this.updateTask(taskID, { isDeleted: true });
+    } catch (error) {
+      return {
+        errCode: -1,
+        errMsg: `[TaskDAO] error while calling removeTask ${error}`
+      };
+    }
+  }
 
   static async taskCount() {
     try {

@@ -3,12 +3,13 @@ import validator from "validator";
 import { taskSchema } from "./task.model";
 
 export const USER = {
-  id: "id",
+  id: "_id",
   name: "name",
   age: "age",
   email: "email",
   pwd: "pwd",
-  tasks: "tasks"
+  tasks: "tasks",
+  isDeleted: "isDeleted"
 };
 
 //Define schema
@@ -42,6 +43,10 @@ export const USER_SCHEMA = new Schema({
   },
   [USER.tasks]: {
     type: [taskSchema]
+  },
+  [USER.isDeleted]: {
+    type: Boolean,
+    default: false
   }
 });
 

@@ -1,21 +1,18 @@
 import m from "mongoose";
 
 export const TASK = {
-  id: "userID",
+  id: "_id",
   completed: "completed",
   desc: "desc",
   content: "content",
-  date: "date"
+  date: "date",
+  isDeleted: "isDeleted"
 };
 
 const Schema = m.Schema;
 export const TASK_SCHEMA = new Schema({
-  [TASK.id]: {
-    type: Schema.Types.ObjectId
-  },
   [TASK.completed]: {
     type: Boolean,
-    required: true,
     default: false
   },
   [TASK.desc]: {
@@ -32,7 +29,11 @@ export const TASK_SCHEMA = new Schema({
   },
   [TASK.date]: {
     type: Date,
-    required: true
+    default: Date.now()
+  },
+  [TASK.isDeleted]: {
+    type: Boolean,
+    default: false
   }
 });
 
