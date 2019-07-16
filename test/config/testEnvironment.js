@@ -8,20 +8,26 @@ const CONNECT_OPTIONS = {
   useNewUrlParser: true,
   useCreateIndex: true,
   autoIndex: false,
-  reconnectTries: Number.MAX_VALUE
+  reconnectTries: Number.MAX_VALUE,
+  useFindAndModify: false
 };
 
 module.exports = class TestEnvironment extends NodeEnvironment {
   async setup() {
     if (!this.global.mongooseDB) {
-      this.global.mongooseDB = m.createConnection();
+      this.global.mongooseDB = await m.connect(DB_URI, CONNECT_OPTIONS).then(
+        client => client,
+        err => {
+          return { err: err };
+        }
+      );
     }
     await super.setup();
   }
 
   async teardown() {
     if (this.global.mongooseDB) {
-      this.global.mongooseDB.close();
+      this.global.mongooseDB.disconnect();
     }
     await super.teardown();
   }

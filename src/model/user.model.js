@@ -1,6 +1,5 @@
 import m from "mongoose";
 import validator from "validator";
-import { taskSchema } from "./task.model";
 
 export const USER = {
   id: "_id",
@@ -15,9 +14,6 @@ export const USER = {
 //Define schema
 const Schema = m.Schema;
 export const USER_SCHEMA = new Schema({
-  [USER.id]: {
-    type: Schema.Types.ObjectId
-  },
   [USER.name]: {
     type: String,
     required: true,
@@ -42,7 +38,7 @@ export const USER_SCHEMA = new Schema({
     minlength: 8
   },
   [USER.tasks]: {
-    type: [taskSchema]
+    type: []
   },
   [USER.isDeleted]: {
     type: Boolean,

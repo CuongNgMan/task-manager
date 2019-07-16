@@ -7,11 +7,7 @@ const sampleTaskId = new ObjectId();
 
 describe("TaskDAO should connect to DB and create new task", () => {
   beforeAll(async () => {
-    await global.mongooseDB
-      .openUri(process.env.__URI__, { useNewUrlParser: true, useFindAndModify: false })
-      .then(async client => {
-        await TaskDAO.injectDB(client);
-      });
+    await TaskDAO.injectDB(global.mongooseDB);
   });
 
   test("Create new task", async () => {

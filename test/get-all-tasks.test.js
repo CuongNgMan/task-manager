@@ -1,24 +1,20 @@
 import TaskDAO from "../src/DAO/taskDAO";
 import m from "mongodb";
-import { DH_NOT_SUITABLE_GENERATOR } from "constants";
 
 const ObjectID = m.ObjectId;
 
 describe("Connect to DB and get task(s)", () => {
   beforeAll(async () => {
-    await global.mongooseDB
-      .openUri(process.env.__URI__, { useNewUrlParser: true })
-      .then(async client => {
-        await TaskDAO.injectDB(client);
-      });
+    await TaskDAO.injectDB(global.mongooseDB);
   });
 
-  test("Getting all tasks", async () => {
+  test("Getting all tasks which have prop isDeleted=false", async () => {
     try {
       const tasks = await TaskDAO.getTasks();
       console.log(tasks);
       const returnedType = Array.isArray(tasks);
       expect(returnedType).toEqual(true);
+      expect(tasks.length).not.toEqual(0);
     } catch (error) {
       console.log(`[Testing] error while calling TaskDAO.getTasks() ${error}`);
     }

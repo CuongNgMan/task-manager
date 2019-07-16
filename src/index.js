@@ -1,6 +1,6 @@
 import m from "mongoose";
 import TaskDAO from "./DAO/taskDAO";
-
+import UserDAO from "./DAO/userDAO";
 import conn, { DB_URI, CONNECT_OPTIONS, SERVER_PORT, DB_NAME } from "./db/conn";
 
 import app from "./server";
@@ -27,7 +27,7 @@ conn
   .openUri(DB_URI, CONNECT_OPTIONS)
   .then(async client => {
     await TaskDAO.injectDB(client);
-
+    await UserDAO.injectDB(client);
     app.listen(SERVER_PORT, err => {
       if (err) {
         console.log(`Error while listening on port ${SERVER_PORT}`);
