@@ -23,18 +23,25 @@ export default class UserDAO {
 
   static async getUsers() {
     try {
-      const users = await userModel.find({ isDeleted: false });
+      const users = await userModel.find({ isDeleted: false }, { __v: 0 });
+      if (!Array.isArray(users) || users.length === 0) {
+        return ErrorGenerateHelper(
+          "Cannot retrieve any users from database",
+          204
+        );
+      }
       return users;
     } catch (error) {
       return ErrorGenerateHelper(
-        `[UserDAO] Error while calling getUser() - ${error.message}`
+        `[UserDAO] Error while calling getUsers() - ${error.message}`,
+        500
       );
     }
   }
 
   static async getUser(user_id) {
     try {
-      const user = await userModel.findById(user_id).lean();
+      const user = await userModel.findById(user_id, { __v: 0 }).lean();
       return user;
     } catch (error) {
       return ErrorGenerateHelper(

@@ -9,6 +9,7 @@ router.route("/task/:id").get(TaskController.apiGetTaskByID);
 router
   .route("/task")
   .post(TaskController.apiAddTask)
-  .put(TaskController.apiUpdateTaskByID);
+  .put(TaskController.apiUpdateTaskByID)
+  .delete(TaskController.apiRemoveTaskByID);
 
 export default router;

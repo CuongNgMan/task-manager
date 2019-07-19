@@ -41,14 +41,11 @@ export default class TaskController {
   static async apiAddTask(req, res, next) {
     try {
       const task = req.body;
-      console.log(task);
-      await TaskDAO.createTask(task).then((error, createdTask) => {
-        if (error) {
-          res.status(400).send(error);
-        }
-        console.log(createdTask);
-        res.status(201).send();
-      });
+      const createTask = await TaskDAO.createTask(task);
+      if (createTask.errCode) {
+        res.status(400).send(createTask);
+      }
+      res.status(201).send({ message: "new user created" });
     } catch (error) {
       const message = ErrorGenerateHelper(
         `[TaskController] error while calling apiAddTask - ${error.message}`
@@ -59,7 +56,6 @@ export default class TaskController {
 
   static async apiUpdateTaskByID(req, res, next) {
     res.set("Content-Type", "application/json");
-
     try {
       const task = req.body;
       await TaskDAO.updateTask(task._id, task.newtask).then(error => {
@@ -82,13 +78,14 @@ export default class TaskController {
     res.set("Content-Type", "application/json");
 
     try {
-      const task = req.body;
-      await TaskDAO.updateTask(task.id, { isDeleted: true }).then(error => {
-        if (error) {
-          res.status(400).send(error);
-        }
-        res.status(200).send({ errCode: 0, errMessage: "Task deleted" });
+      const { id } = { ...req.body };
+      const removedTask = await TaskDAO.updateTask(id, {
+        isDeleted: true
       });
+      if (removedTask.errCode) {
+        res.status(400).send(removedTask);
+      }
+      res.status(200).send({ message: `task with id: ${id} removed` });
     } catch (error) {
       const message = ErrorGenerateHelper(
         `[TaskController] error while calling apiRemoveTaskByID - ${error}`
