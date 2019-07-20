@@ -1,4 +1,4 @@
-import UserDAO from "../src/DAO/userDAO";
+import UserDAO from "../../src/DAO/userDAO";
 
 const targetID = "5d138d861d427733fcb70ba9";
 

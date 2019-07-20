@@ -1,6 +1,6 @@
-import TaskDAO from "../src/DAO/taskDAO";
+import TaskDAO from "../../src/DAO/taskDAO";
 import mongodb from "mongodb";
-import { TASK } from "../src/model/task.model";
+import { TASK } from "../../src/model/task.model";
 
 const ObjectId = mongodb.ObjectId;
 const sampleTaskId = new ObjectId();

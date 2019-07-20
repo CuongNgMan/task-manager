@@ -3,13 +3,16 @@ import UserController from "../api/user.controller";
 
 const router = express.Router();
 
-// router.route("/user/:id").get();
-router.route("/").get(UserController.apiGetAllUser);
-router.route("/user/:id").get(UserController.apiGetUserById);
 router
-  .route("/user")
-  .post(UserController.apiAddUser)
+  .route("/")
+  .get(UserController.apiGetAllUser)
+  .post(UserController.apiAddUser);
+
+router
+  .route("/:id")
+  .get(UserController.apiGetUserById)
   .put(UserController.apiUpdateUserProfile)
-  .delete(UserController.apiRemoveUser);
+  .patch(UserController.apiSoftDeleteUser)
+  .delete(UserController.apiHardDeleteUser);
 
 export default router;

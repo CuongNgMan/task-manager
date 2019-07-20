@@ -1,4 +1,4 @@
-import TaskDAO from "../src/DAO/taskDAO";
+import TaskDAO from "../../src/DAO/taskDAO";
 import m from "mongodb";
 
 const ObjectID = m.ObjectId;

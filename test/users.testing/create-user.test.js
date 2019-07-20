@@ -1,4 +1,4 @@
-import UserDAO from "../src/DAO/userDAO";
+import UserDAO from "../../src/DAO/userDAO";
 
 import mongo from "mongodb";
 

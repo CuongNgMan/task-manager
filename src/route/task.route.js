@@ -3,13 +3,15 @@ import TaskController from "../api/task.controller";
 
 const router = express.Router();
 
-router.route("/").get(TaskController.apiGetTasks);
-router.route("/task/:id").get(TaskController.apiGetTaskByID);
-
 router
-  .route("/task")
-  .post(TaskController.apiAddTask)
+  .route("/")
+  .get(TaskController.apiGetTasks)
+  .post(TaskController.apiAddTask);
+router
+  .route("/:id")
+  .get(TaskController.apiGetTaskByID)
   .put(TaskController.apiUpdateTaskByID)
-  .delete(TaskController.apiRemoveTaskByID);
+  .patch(TaskController.apiSoftRemoveTaskByID)
+  .delete(TaskController.apiHardRemoveTaskByID);
 
 export default router;

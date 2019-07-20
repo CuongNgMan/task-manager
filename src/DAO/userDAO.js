@@ -1,12 +1,16 @@
 //IMPORT
-import { USER_SCHEMA } from "../model/user.model";
 import mongodb from "mongodb";
+import { USER_SCHEMA } from "../model/user.model";
 import { ErrorGenerateHelper } from "../utils/ErrorGenerateHelper";
 
 let userModel;
 const ObjectID = mongodb.ObjectId;
 
 export default class UserDAO {
+  /**
+   * @param {MongoDBClient} client - a mongodb client instance
+   * @returns {Model} - a User model
+   */
   static async injectDB(client) {
     if (userModel) {
       return;
@@ -21,6 +25,9 @@ export default class UserDAO {
     }
   }
 
+  /**
+   * @returns {Object} - All current user
+   */
   static async getUsers() {
     try {
       const users = await userModel.find({ isDeleted: false }, { __v: 0 });
@@ -39,9 +46,17 @@ export default class UserDAO {
     }
   }
 
-  static async getUser(user_id) {
+  /**
+   * @param {ObjectID} user_id - user's id
+   * @returns {Object} - an user information specfified by its id
+   */
+  static async getUserById(user_id) {
     try {
-      const user = await userModel.findById(user_id, { __v: 0 }).lean();
+      const user = await userModel.findById(
+        user_id,
+        { __v: 0 },
+        { lean: true }
+      );
       return user;
     } catch (error) {
       return ErrorGenerateHelper(
@@ -52,7 +67,7 @@ export default class UserDAO {
 
   /**
    * Create a new user
-   * @param {Object} new_user - The User object which contains id, name, age, email, pwd, tasks
+   * @param {Object} user_id - The User object
    * @returns {Object} created User - The created user
    */
   static async createUser(new_user) {
@@ -66,6 +81,11 @@ export default class UserDAO {
     }
   }
 
+  /**
+   * @param {ObjectID} user_id - The User object
+   * @param {Object} update_user - a new property which apply for a user specified by user_id
+   * @return {Object} - an updated user
+   */
   static async updateUser(user_id, update) {
     try {
       const updatedUser = await userModel.findByIdAndUpdate(
@@ -73,7 +93,9 @@ export default class UserDAO {
         update,
         {
           lean: true,
-          omitUndefined: false
+          omitUndefined: false,
+          new: true,
+          runValidators: true
         }
       );
       return updatedUser;
@@ -86,15 +108,41 @@ export default class UserDAO {
     }
   }
 
-  static async removeUser(user_id) {
+  /**
+   * @param {ObjectID} user_id - The User object
+   * @return {Object} - a deleted user
+   */
+  static async softDeleteUserByID(user_id) {
     try {
-      const removedUser = await UserDAO.updateUser(user_id, {
+      const removedUser = await this.updateUser(user_id, {
         isDeleted: true
       });
       return removedUser;
     } catch (error) {
       return ErrorGenerateHelper(
-        `[UserDAO] error while calling removeUser(user_id) - ${error.message}`
+        `[UserDAO] error while calling softDeleteUserByID(user_id) - ${
+          error.message
+        }`
+      );
+    }
+  }
+
+  /**
+   * @param {ObjectID} user_id - The User object
+   * @return {ObjectID} - an ObjectID from the deleted user
+   */
+  static async hardDeleteUserById(user_id) {
+    try {
+      const returnUserID = await userModel
+        .findOneAndRemove({ _id: user_id }, { rawResult: true })
+        .exec();
+
+      return returnUserID;
+    } catch (error) {
+      return ErrorGenerateHelper(
+        `[UserDAO] error while calling hardDeleteUserById(user_id) - ${
+          error.message
+        }`
       );
     }
   }

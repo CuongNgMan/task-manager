@@ -1,4 +1,4 @@
-import TaskDAO from "../src/DAO/taskDAO";
+import TaskDAO from "../../src/DAO/taskDAO";
 
 describe("TaskDAO should connect to DB and update a task", () => {
   beforeAll(async () => {
