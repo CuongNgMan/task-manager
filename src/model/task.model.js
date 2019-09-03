@@ -1,7 +1,7 @@
 import m from "mongoose";
 import mongo from "mongodb";
 
-const ObjectID = mongo.ObjectId;
+const ObjectId = m.Schema.Types.ObjectId;
 
 export const TASK = {
   id: "_id",
@@ -9,7 +9,8 @@ export const TASK = {
   desc: "desc",
   content: "content",
   date: "date",
-  isDeleted: "isDeleted"
+  isDeleted: "isDeleted",
+  owner: "owner"
 };
 
 const Schema = m.Schema;
@@ -37,7 +38,13 @@ export const TASK_SCHEMA = new Schema({
   [TASK.isDeleted]: {
     type: Boolean,
     default: false
+  },
+  [TASK.owner]: {
+    type: ObjectId,
+    require: true
   }
 });
 
 //Schema hooks
+
+export const TaskModel = m.model("Task", TASK_SCHEMA);

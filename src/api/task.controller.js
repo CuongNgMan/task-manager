@@ -3,7 +3,7 @@ import { ErrorGenerateHelper } from "../utils/ErrorGenerateHelper";
 import { TASK } from "../model/task.model";
 
 export default class TaskController {
-  static async apiGetTasks(req, res, next) {
+  static async apiGetTasks(req, res, _next) {
     try {
       const tasks = await TaskDAO.getTasks();
       if (tasks.errCode) {
@@ -18,7 +18,7 @@ export default class TaskController {
     }
   }
 
-  static async apiGetTaskByID(req, res, next) {
+  static async apiGetTaskByID(req, res, _next) {
     try {
       if (!req.params.id) {
         throw new Error("[TaskController] requested ID not found");
@@ -37,12 +37,13 @@ export default class TaskController {
     }
   }
 
-  static async apiAddTask(req, res, next) {
+  static async apiAddTask(req, res, _next) {
     try {
-      const task = req.body;
-      const createTask = await TaskDAO.createTask(task);
-      if (createTask.errCode) {
-        return res.status(400).send(createTask);
+      let new_task = req.body;
+      let user = req.user;
+      const result = await TaskDAO.createTask({ ...new_task, owner: user._id });
+      if (result.errCode) {
+        return res.status(400).send(result);
       }
       res.status(201).send({ message: "new task created" });
     } catch (error) {
@@ -53,7 +54,7 @@ export default class TaskController {
     }
   }
 
-  static async apiUpdateTaskByID(req, res, next) {
+  static async apiUpdateTaskByID(req, res, _next) {
     const allowedProps = [...Object.getOwnPropertyNames(TASK)];
     const updatedProps = Object.keys(req.body);
     const isValidProp = updatedProps.every(prop => allowedProps.includes(prop));
@@ -74,15 +75,13 @@ export default class TaskController {
       res.status(200).send({ ok: 1 });
     } catch (error) {
       const message = ErrorGenerateHelper(
-        `[TaskController] error while calling apiUpdateTaskByID - ${
-          error.message
-        }`
+        `[TaskController] error while calling apiUpdateTaskByID - ${error.message}`
       );
       res.status(500).send(message);
     }
   }
 
-  static async apiSoftRemoveTaskByID(req, res, next) {
+  static async apiSoftRemoveTaskByID(req, res, _next) {
     res.set("Content-Type", "application/json");
 
     try {
@@ -97,15 +96,13 @@ export default class TaskController {
         .send({ message: `task with id: ${req.params.id} removed` });
     } catch (error) {
       const message = ErrorGenerateHelper(
-        `[TaskController] error while calling apiSoftRemoveTaskByID - ${
-          error.message
-        }`
+        `[TaskController] error while calling apiSoftRemoveTaskByID - ${error.message}`
       );
       res.status(500).send(message);
     }
   }
 
-  static async apiHardRemoveTaskByID(req, res, next) {
+  static async apiHardRemoveTaskByID(req, res, _next) {
     res.set("Content-Type", "application/json");
     try {
       const result = await TaskDAO.hardRemoveTaskByID(req.params.id);
@@ -118,9 +115,7 @@ export default class TaskController {
       res.status(200).send(`Task with id: ${req.params.id} removed`);
     } catch (error) {
       const message = ErrorGenerateHelper(
-        `[TaskController] error while calling apiHardRemoveTaskByID - ${
-          error.message
-        }`
+        `[TaskController] error while calling apiHardRemoveTaskByID - ${error.message}`
       );
       res.status(500).send(message);
     }

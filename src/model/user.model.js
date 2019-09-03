@@ -1,5 +1,7 @@
 import m from "mongoose";
 import validator from "validator";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const USER = {
   id: "_id",
@@ -8,7 +10,8 @@ export const USER = {
   email: "email",
   pwd: "pwd",
   tasks: "tasks",
-  isDeleted: "isDeleted"
+  isDeleted: "isDeleted",
+  tokens: "tokens"
 };
 
 //Define schema
@@ -43,10 +46,76 @@ export const USER_SCHEMA = new Schema({
   [USER.isDeleted]: {
     type: Boolean,
     default: false
-  }
+  },
+  [USER.tokens]: [
+    {
+      token: {
+        type: String,
+        required: true
+      }
+    }
+  ]
 });
 
-//Define schema hooks
+//Methods
+USER_SCHEMA.methods.generateToken = async function(_cb) {
+  const user = this;
+  const token = await jwt.sign({ _id: user._id.toString() }, "MYSECRETKEY", {
+    issuer: "Cuong Srv",
+    subject: "Task App",
+    expiresIn: "1d"
+  });
+
+  user.tokens = user.tokens.concat({ token: token });
+  await user.save();
+  return token;
+};
+
+USER_SCHEMA.methods.toJSON = function(_cb) {
+  const user = this;
+  const userObject = user.toObject();
+
+  delete userObject.pwd;
+  delete userObject.tokens;
+
+  return userObject;
+};
+
+//Static
+USER_SCHEMA.statics.findByCredentials = async function(email, password) {
+  const user = await this.findOne({ email: email });
+
+  if (!user) {
+    return {
+      errCode: -1,
+      errMessage: "Unable to login - Email not found"
+    };
+  }
+
+  const isMatch = await bcrypt.compare(password, user.pwd);
+  if (!isMatch) {
+    return {
+      errCode: -1,
+      errMessage: "Unable to login - Wrong password"
+    };
+  }
+
+  return user;
+};
+
+//Validation
 USER_SCHEMA.path("email").validate(value => {
   return validator.isEmail(value);
 });
+
+//Hooks
+USER_SCHEMA.pre("save", async function(next) {
+  let user = this;
+  //In case user changing password
+  if (user.isModified("pwd")) {
+    user.pwd = await bcrypt.hash(user.pwd, 10);
+  }
+  next();
+});
+
+export const UserModel = m.model("User", USER_SCHEMA);

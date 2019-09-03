@@ -1,34 +1,13 @@
 import mongodb from "mongodb";
+import mongoose from "mongoose";
 import { TASK, TASK_SCHEMA } from "../model/task.model";
 import { ErrorGenerateHelper } from "../utils/ErrorGenerateHelper";
 
 const ObjectID = mongodb.ObjectId;
 
-let taskModel;
+let taskModel = mongoose.model("Task", TASK_SCHEMA);
 
 export default class TaskDAO {
-  /**
-   * @param {MongoDBClient} client - a mongodb client instance
-   * @returns {Model} - a User model
-   */
-  static async injectDB(client) {
-    if (taskModel) {
-      return;
-    }
-    try {
-      taskModel = client.model("Task", TASK_SCHEMA);
-      this.taskModel = taskModel;
-      return taskModel;
-    } catch (error) {
-      return ErrorGenerateHelper(
-        `[TaskDAO] error while calling injectDB - ${error.message}`
-      );
-    }
-  }
-
-  /**
-   * @returns {Object} - All current tasks
-   */
   static async getTasks() {
     try {
       const tasks = await taskModel.find({ isDeleted: false });
@@ -40,10 +19,6 @@ export default class TaskDAO {
     }
   }
 
-  /**
-   * @param {ObjectID} task_id - task's id
-   * @returns {Object} - a task information specfified by its id
-   */
   static async getTaskByID(task_id) {
     try {
       const task = await taskModel.findById(task_id, null, { lean: true });
@@ -55,11 +30,6 @@ export default class TaskDAO {
     }
   }
 
-  /**
-   * Create a new user
-   * @param {Object} task_id - The Task object
-   * @returns {Object} - The newly created task
-   */
   static async createTask(new_task) {
     try {
       const createdTask = await taskModel.create(new_task);
@@ -71,11 +41,6 @@ export default class TaskDAO {
     }
   }
 
-  /**
-   * @param {ObjectID} task_id - The Task object
-   * @param {Object} update_task - a new property which apply for a task specified by task_id
-   * @return {Object} - an updated task
-   */
   static async updateTaskByID(task_id, update) {
     try {
       const updatedTask = await taskModel.findByIdAndUpdate(
@@ -96,10 +61,6 @@ export default class TaskDAO {
     }
   }
 
-  /**
-   * @param {ObjectID} task_id - The Task object
-   * @return {Object} - a deleted task
-   */
   static async softRemoveTaskByID(task_id) {
     try {
       await this.updateTask(task_id, { isDeleted: true });
@@ -110,10 +71,6 @@ export default class TaskDAO {
     }
   }
 
-  /**
-   * @param {ObjectID} task_id - The Task object
-   * @return {Object} - a deleted task
-   */
   static async hardRemoveTaskByID(task_id) {
     try {
       const result = await taskModel
@@ -128,9 +85,6 @@ export default class TaskDAO {
     }
   }
 
-  /**
-   * @return {Number} - a total count of task
-   */
   static async taskCount() {
     try {
       return TaskModel.countDocuments();
