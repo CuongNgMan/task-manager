@@ -4,7 +4,6 @@ package-lock.json
 .gitignore
 tmp.js
 mock
-src/config
 *test*
 tsconfig.json
 .babelrc

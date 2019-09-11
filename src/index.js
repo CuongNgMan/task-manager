@@ -1,14 +1,14 @@
 import m from "mongoose";
-import config from "./config/index";
+
 import app from "./server";
+import { CONFIGURATION } from "./config/index";
 
 connect();
 
 function listen() {
   if (app.get("env") === "test") return;
 
-  const { PORT } = config.APP;
-
+  const { PORT } = CONFIGURATION.APP;
   app.listen(PORT, error => {
     if (error) {
       console.log(`Error while listening on port ${PORT}`);
@@ -18,7 +18,9 @@ function listen() {
 }
 
 function connect() {
-  const { CONNECTION_STRING, CONNECT_OPTIONS } = config.DB;
+  console.log("in side connection");
+  console.log(CONFIGURATION);
+  const { CONNECTION_STRING, CONNECT_OPTIONS } = CONFIGURATION.DB;
 
   m.connection
     .on("error", error => {
