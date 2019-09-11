@@ -6,27 +6,13 @@ const CONNECT_OPTIONS = {
   useFindAndModify: false
 };
 
-// module.exports = {
-//   DB: {
-//     CONNECTION_STRING: process.env.MONGODB_URL,
-//     CONNECT_OPTIONS: CONNECT_OPTIONS
-//   },
-//   APP: {
-//     PORT: process.env.__PORT__
-//   },
-//   twitter: {},
-//   github: {},
-//   linkedin: {},
-//   google: {}
-// };
-
 export const production = {
   DB: {
     CONNECTION_STRING: process.env.MONGODB_URL,
     CONNECT_OPTIONS: CONNECT_OPTIONS
   },
   APP: {
-    PORT: process.env.__PORT__
+    PORT: process.env.PORT
   },
   twitter: {},
   github: {},
