@@ -1,5 +1,5 @@
 import m from "mongoose";
-import config from "./config";
+import config from "./config/index";
 import app from "./server";
 
 connect();
