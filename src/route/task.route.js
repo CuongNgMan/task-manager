@@ -5,12 +5,16 @@ import { authentication } from "../config/middleware/auth";
 const router = express.Router();
 
 router
-  .route("/me")
+  .route("/me/:id")
   .get(authentication, TaskController.apiGetTaskByID)
   .put(authentication, TaskController.apiUpdateTaskByID)
-  .post(authentication, TaskController.apiAddTask)
   .patch(authentication, TaskController.apiSoftRemoveTaskByID)
   .delete(authentication, TaskController.apiHardRemoveTaskByID);
+  
+router
+  .route("/me")
+  .get(authentication, TaskController.apiGetTasks)
+  .post(authentication, TaskController.apiAddTask);
 
 // router.route("/").post(authentication, TaskController.apiAddTask);
 // .get(authentication, TaskController.apiGetTasks)

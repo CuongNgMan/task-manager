@@ -100,7 +100,7 @@ export default class UserController {
 
   static async apiHardDeleteUser(req, res, _next) {
     try {
-      const result = await UserDAO.hardDeleteUserById(req.user._id);
+      const result = await UserDAO.hardDeleteUserById(req.user);
 
       if (result.value === null) {
         const message = ErrorGenerateHelper(
@@ -124,6 +124,7 @@ export default class UserController {
     try {
       const { email, password } = req.body;
       const result = await UserDAO.login(email, password);
+
       if (result && !result.errCode) {
         res.status(200).send({
           isValidUser: true,

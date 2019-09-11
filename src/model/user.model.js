@@ -2,6 +2,7 @@ import m from "mongoose";
 import validator from "validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { TaskModel } from "./task.model";
 
 export const USER = {
   id: "_id",
@@ -16,46 +17,48 @@ export const USER = {
 
 //Define schema
 const Schema = m.Schema;
-export const USER_SCHEMA = new Schema({
-  [USER.name]: {
-    type: String,
-    required: true,
-    trim: true,
-    maxlength: 50
-  },
-  [USER.age]: {
-    type: Number,
-    required: true,
-    max: 100
-  },
-  [USER.email]: {
-    type: String,
-    required: true,
-    lowercase: true,
-    trim: true
-  },
-  [USER.pwd]: {
-    type: String,
-    required: true,
-    trim: true,
-    minlength: 8
-  },
-  [USER.tasks]: {
-    type: []
-  },
-  [USER.isDeleted]: {
-    type: Boolean,
-    default: false
-  },
-  [USER.tokens]: [
-    {
-      token: {
-        type: String,
-        required: true
+export const USER_SCHEMA = new Schema(
+  {
+    [USER.name]: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 50
+    },
+    [USER.age]: {
+      type: Number,
+      required: true,
+      max: 100
+    },
+    [USER.email]: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true
+    },
+    [USER.pwd]: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 8
+    },
+    [USER.isDeleted]: {
+      type: Boolean,
+      default: false
+    },
+    [USER.tokens]: [
+      {
+        token: {
+          type: String,
+          required: true
+        }
       }
-    }
-  ]
-});
+    ]
+  },
+  {
+    timestamps: true
+  }
+);
 
 //Methods
 USER_SCHEMA.methods.generateToken = async function(_cb) {
@@ -80,6 +83,13 @@ USER_SCHEMA.methods.toJSON = function(_cb) {
 
   return userObject;
 };
+
+//Virtuals
+USER_SCHEMA.virtual("tasks", {
+  ref: "Task",
+  localField: "_id",
+  foreignField: "owner"
+});
 
 //Static
 USER_SCHEMA.statics.findByCredentials = async function(email, password) {
@@ -115,6 +125,12 @@ USER_SCHEMA.pre("save", async function(next) {
   if (user.isModified("pwd")) {
     user.pwd = await bcrypt.hash(user.pwd, 10);
   }
+  next();
+});
+
+USER_SCHEMA.pre("remove", async function(next) {
+  let user = this;
+  await TaskModel.deleteMany({ owner: user._id });
   next();
 });
 

@@ -1,16 +1,11 @@
 //IMPORT
-import mongodb from "mongodb";
-import mongoose from "mongoose";
-import { USER_SCHEMA } from "../model/user.model";
 import { ErrorGenerateHelper } from "../utils/ErrorGenerateHelper";
-
-let userModel = mongoose.model("User", USER_SCHEMA);
-const ObjectID = mongodb.ObjectId;
+import { UserModel } from "../model/user.model";
 
 export default class UserDAO {
   static async getUsers() {
     try {
-      const users = await userModel.find({ isDeleted: false }, { __v: 0 });
+      const users = await UserModel.find({ isDeleted: false }, { __v: 0 });
       if (!Array.isArray(users) || users.length === 0) {
         return ErrorGenerateHelper(
           "Cannot retrieve any users from database",
@@ -28,7 +23,7 @@ export default class UserDAO {
 
   static async getUserById(user_id) {
     try {
-      const user = await userModel.findById(
+      const user = await UserModel.findById(
         user_id,
         { __v: 0 },
         { lean: true }
@@ -43,13 +38,13 @@ export default class UserDAO {
 
   static async createUser(new_user) {
     try {
-      // const user = await userModel.create(new_user);
+      // const user = await UserModel.create(new_user);
       // const token = await user.generateToken();
       // return { user, token };
 
       const result = await Promise.resolve({
         then: async (onFulfill, _) => {
-          const user = await userModel.create(new_user);
+          const user = await UserModel.create(new_user);
           onFulfill(user);
         }
       }).then(async user => {
@@ -67,19 +62,18 @@ export default class UserDAO {
 
   static async updateUser(user_id, update) {
     try {
-      // const updatedUser = await userModel.findByIdAndUpdate(
+      // const updatedUser = await UserModel.findByIdAndUpdate(
       //   ObjectID(user_id),
       //   update
       // );
 
-      const updatedUser = await userModel.findById(user_id);
+      const updatedUser = await UserModel.findById(user_id);
       const updateProp = Object.keys(update);
       updateProp.forEach(prop => {
         updatedUser[prop] = update[prop];
       });
       const user = await updatedUser.save();
       return user;
-      // return updatedUser;
     } catch (error) {
       return ErrorGenerateHelper(
         `[UserDAO] error while calling updateUser(user_id, newUser) - ${error.message}`
@@ -101,11 +95,9 @@ export default class UserDAO {
     }
   }
 
-  static async hardDeleteUserById(user_id) {
+  static async hardDeleteUserById(user) {
     try {
-      const returnUserID = await userModel
-        .findOneAndRemove({ _id: user_id }, { rawResult: true })
-        .exec();
+      const returnUserID = await user.remove();
 
       return returnUserID;
     } catch (error) {
@@ -117,7 +109,7 @@ export default class UserDAO {
 
   static async login(email, password) {
     try {
-      const user = await userModel.findByCredentials(email, password);
+      const user = await UserModel.findByCredentials(email, password);
       const token = await user.generateToken();
 
       return { user, token };
