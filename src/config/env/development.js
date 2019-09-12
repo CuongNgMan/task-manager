@@ -1,6 +1,6 @@
-const PORT = process.env.PORT || 5000;
-const DB_NAME = process.env.__DB_NAME__ || "task-manager-api";
-const DB_PORT = process.env.__DB_PORT__ || "27017";
+const PORT = 5000;
+const DB_NAME = "task-manager-api";
+const DB_PORT = "27017";
 
 const CONNECT_OPTIONS = {
   useNewUrlParser: true,
