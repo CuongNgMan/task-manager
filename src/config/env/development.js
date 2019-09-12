@@ -10,9 +10,7 @@ const CONNECT_OPTIONS = {
   useFindAndModify: false
 };
 
-const CONNECTION_STRING = process.env.MONGODB_URL
-  ? `${process.env.MONGODB_URL}`.replace("DATABASENAME", DB_NAME)
-  : `mongodb://127.0.0.1:${DB_PORT}/${DB_NAME}`;
+const CONNECTION_STRING = `mongodb://127.0.0.1:${DB_PORT}/${DB_NAME}`;
 
 export const development = {
   DB: {
